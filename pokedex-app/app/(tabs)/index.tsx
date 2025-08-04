@@ -1,4 +1,11 @@
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import { usePokemons } from '../../hooks/usePokemons';
 import { useRouter } from 'expo-router';
 
@@ -33,15 +40,23 @@ export default function Home() {
           marginBottom: 16,
         }}
       >
-        <Text style={{ color: 'white', fontWeight: 'bold' }}>Voir mes favoris</Text>
+        <Text style={{ color: 'white', fontWeight: 'bold' }}>
+          Voir mes favoris
+        </Text>
       </TouchableOpacity>
       <FlatList
         data={pokemons}
         renderItem={renderItem}
         keyExtractor={(item) => item.name}
       />
-      <TouchableOpacity onPress={loadMore} style={styles.button} disabled={loading}>
-        <Text style={styles.buttonText}>{loading ? 'Chargement...' : 'Charger plus'}</Text>
+      <TouchableOpacity
+        onPress={loadMore}
+        style={styles.button}
+        disabled={loading}
+      >
+        <Text style={styles.buttonText}>
+          {loading ? 'Chargement...' : 'Charger plus'}
+        </Text>
       </TouchableOpacity>
     </View>
   );

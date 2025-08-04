@@ -1,4 +1,11 @@
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import { useFavorites } from '../../hooks/useFavorites';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -15,8 +22,10 @@ export default function FavoritesPage() {
       setLoading(true);
       const results = await Promise.all(
         favorites.map((name) =>
-          axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`).then((res) => res.data)
-        )
+          axios
+            .get(`https://pokeapi.co/api/v2/pokemon/${name}`)
+            .then((res) => res.data),
+        ),
       );
       setData(results);
       setLoading(false);
@@ -33,21 +42,24 @@ export default function FavoritesPage() {
   const renderItem = ({ item }: { item: any }) => {
     return (
       <View style={styles.card}>
-      <TouchableOpacity
-        onPress={() => router.push(`/details/${item.name}`)}
-        style={{ alignItems: 'center' }}
-      >
-        <Image source={{ uri: item.sprites.front_default }} style={styles.image} />
-        <Text style={styles.name}>{item.name}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push(`/details/${item.name}`)}
+          style={{ alignItems: 'center' }}
+        >
+          <Image
+            source={{ uri: item.sprites.front_default }}
+            style={styles.image}
+          />
+          <Text style={styles.name}>{item.name}</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => removeFavorite(item.name)}
-        style={styles.deleteButton}
-      >
-        <Text style={styles.deleteText}>🗑️ Supprimer</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          onPress={() => removeFavorite(item.name)}
+          style={styles.deleteButton}
+        >
+          <Text style={styles.deleteText}>🗑️ Supprimer</Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -88,9 +100,9 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
-    },
+  },
   deleteText: {
     color: '#fff',
     fontWeight: 'bold',
-    },
+  },
 });
