@@ -1,5 +1,5 @@
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { usePokemons } from '../hooks/usePokemons';
+import { usePokemons } from '../../hooks/usePokemons';
 import { useRouter } from 'expo-router';
 
 export default function Home() {

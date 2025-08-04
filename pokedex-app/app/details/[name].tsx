@@ -4,9 +4,13 @@ import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
 import { useFavorites } from '../../hooks/useFavorites';
 import { TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
 
 export default function PokemonDetails() {
   const { name } = useLocalSearchParams();
+  const router = useRouter();
   const [pokemon, setPokemon] = useState<any>(null);
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
   const [isFav, setIsFav] = useState(false);
@@ -29,6 +33,11 @@ useEffect(() => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={24} color="#333" />
+        <Text style={styles.backText}>Retour</Text>
+      </TouchableOpacity>
+
       <Text style={styles.title}>{pokemon.name}</Text>
       <Image
         source={{ uri: pokemon.sprites.front_default }}
@@ -86,4 +95,16 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     borderRadius: 6,
   },
+  backButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  alignSelf: 'flex-start',
+  marginBottom: 16,
+  },
+  backText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#333',
+  },
+
 });
