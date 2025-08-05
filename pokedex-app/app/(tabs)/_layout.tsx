@@ -13,6 +13,7 @@ export default function Layout() {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="home" color={color} size={size} />
             ),
+            headerTitleStyle: { fontWeight: 'bold' },
           }}
         />
         <Tabs.Screen
@@ -22,6 +23,7 @@ export default function Layout() {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="search" color={color} size={size} />
             ),
+            headerTitleStyle: { fontWeight: 'bold' },
           }}
         />
         <Tabs.Screen
@@ -31,6 +33,7 @@ export default function Layout() {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="star" color={color} size={size} />
             ),
+            headerTitleStyle: { fontWeight: 'bold' },
           }}
         />
       </Tabs>

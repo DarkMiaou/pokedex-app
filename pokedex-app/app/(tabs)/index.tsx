@@ -8,23 +8,34 @@ import {
 } from 'react-native';
 import { usePokemons } from '../../hooks/usePokemons';
 import { useRouter } from 'expo-router';
+import { MotiView } from 'moti';
 
 export default function Home() {
   const { pokemons, loadMore, loading } = usePokemons();
   const router = useRouter();
 
-  const renderItem = ({ item }: { item: any }) => {
+  const renderItem = ({ item, index }: { item: any; index: number }) => {
     const id = item.url.split('/')[6];
     const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 
     return (
-      <TouchableOpacity
-        onPress={() => router.push(`/details/${item.name}`)}
-        style={styles.card}
+      <MotiView
+        from={{ opacity: 0, translateY: 20, scale: 0.95 }}
+        animate={{ opacity: 1, translateY: 0, scale: 1 }}
+        transition={{
+          delay: index * 40,
+          type: 'timing',
+          duration: 300,
+        }}
       >
-        <Image source={{ uri: imageUrl }} style={styles.image} />
-        <Text style={styles.name}>{item.name}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push(`/details/${item.name}`)}
+          style={styles.card}
+        >
+          <Image source={{ uri: imageUrl }} style={styles.image} />
+          <Text style={styles.name}>{item.name}</Text>
+        </TouchableOpacity>
+      </MotiView>
     );
   };
 
