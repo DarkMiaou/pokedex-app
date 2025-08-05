@@ -30,20 +30,6 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => router.push('/favorites')}
-        style={{
-          backgroundColor: '#4169e1',
-          padding: 12,
-          borderRadius: 8,
-          alignItems: 'center',
-          marginBottom: 16,
-        }}
-      >
-        <Text style={{ color: 'white', fontWeight: 'bold' }}>
-          Voir mes favoris
-        </Text>
-      </TouchableOpacity>
       <FlatList
         data={pokemons}
         renderItem={renderItem}
