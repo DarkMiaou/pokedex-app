@@ -53,7 +53,7 @@ export default function SearchPage() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Rechercher un Pokémon</Text>
+      <Text style={styles.title}>🔎 Rechercher un Pokémon</Text>
       <TextInput
         style={styles.input}
         placeholder="Nom du Pokémon"

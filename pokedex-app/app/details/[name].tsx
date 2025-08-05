@@ -48,26 +48,34 @@ export default function PokemonDetails() {
           source={{ uri: pokemon.sprites.front_default }}
           style={styles.image}
         />
-
-        <Text style={styles.subtitle}>Types :</Text>
-        <View style={styles.typeContainer}>
-          {pokemon.types.map((t: any) => (
-            <View
-              key={t.type.name}
-              style={[
-                styles.typeBadge,
-                { backgroundColor: getColorByType(t.type.name) },
-              ]}
-            >
-              <Text style={styles.typeText}>{t.type.name}</Text>
-            </View>
-          ))}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
+          <Text style={styles.subtitle}>Types :</Text>
+          <View style={styles.typeContainer}>
+            {pokemon.types.map((t: any) => (
+              <View
+                key={t.type.name}
+                style={[
+                  styles.typeBadge,
+                  { backgroundColor: getColorByType(t.type.name) },
+                ]}
+              >
+                <Text style={styles.typeText}>{t.type.name}</Text>
+              </View>
+            ))}
+          </View>
         </View>
 
         <Text style={styles.subtitle}>Stats :</Text>
         {pokemon.stats.map((s: any) => (
           <Text key={s.stat.name} style={styles.stat}>
-            {s.stat.name}: {s.base_stat}
+            {s.stat.name.charAt(0).toUpperCase() + s.stat.name.slice(1)}:{' '}
+            {s.base_stat}
           </Text>
         ))}
 
@@ -138,14 +146,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: '600',
-    marginTop: 20,
+    marginTop: 30,
     marginBottom: 8,
   },
   typeContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
+    marginLeft: 8,
   },
   typeBadge: {
     paddingHorizontal: 12,
@@ -164,7 +174,7 @@ const styles = StyleSheet.create({
   favButton: {
     padding: 12,
     borderRadius: 8,
-    marginTop: 20,
+    marginTop: 40,
     width: '100%',
     alignItems: 'center',
   },
