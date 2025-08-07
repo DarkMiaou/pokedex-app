@@ -17,16 +17,16 @@ export default function PokemonDetails() {
   const [isFav, setIsFav] = useState(false);
 
   function extractEvolutionNames(chain: any): string[] {
-  const names = [];
-  let current = chain;
+    const names = [];
+    let current = chain;
 
-  while (current) {
-    names.push(current.species.name);
-    current = current.evolves_to?.[0];
+    while (current) {
+      names.push(current.species.name);
+      current = current.evolves_to?.[0];
+    }
+
+    return names;
   }
-
-  return names;
-}
 
   useEffect(() => {
     if (name && typeof name === 'string') {
@@ -35,24 +35,26 @@ export default function PokemonDetails() {
   }, [isFavorite, name]);
 
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const pokeRes = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
-      setPokemon(pokeRes.data);
+    const fetchData = async () => {
+      try {
+        const pokeRes = await axios.get(
+          `https://pokeapi.co/api/v2/pokemon/${name}`,
+        );
+        setPokemon(pokeRes.data);
 
-      const speciesRes = await axios.get(pokeRes.data.species.url);
-      const evoChainUrl = speciesRes.data.evolution_chain.url;
+        const speciesRes = await axios.get(pokeRes.data.species.url);
+        const evoChainUrl = speciesRes.data.evolution_chain.url;
 
-      const evoRes = await axios.get(evoChainUrl);
-      const names = extractEvolutionNames(evoRes.data.chain);
-      setEvolutionNames(names);
-    } catch (err) {
-      console.error('Erreur lors de la récupération des données :', err);
-    }
-  };
+        const evoRes = await axios.get(evoChainUrl);
+        const names = extractEvolutionNames(evoRes.data.chain);
+        setEvolutionNames(names);
+      } catch (err) {
+        console.error('Erreur lors de la récupération des données :', err);
+      }
+    };
 
-  if (name) fetchData();
-}, [name]);
+    if (name) fetchData();
+  }, [name]);
 
   if (!pokemon) return <Text>Chargement...</Text>;
 
@@ -70,8 +72,8 @@ export default function PokemonDetails() {
       <View style={styles.card}>
         <Text style={styles.title}>{pokemon.name}</Text>
         <Image
-          source={{ 
-              uri: `https://img.pokemondb.net/sprites/home/normal/${pokemon.name}.png`,
+          source={{
+            uri: `https://img.pokemondb.net/sprites/home/normal/${pokemon.name}.png`,
           }}
           style={styles.image}
         />
@@ -105,25 +107,35 @@ export default function PokemonDetails() {
             {s.base_stat}
           </Text>
         ))}
-
-        {evolutionNames.length > 0 && (
-  <View style={styles.evolutionContainer}>
-    <Text style={styles.subtitle}>Évolutions :</Text>
-    <View style={styles.evolutionRow}>
-      {evolutionNames.map((evoName) => (
-        <View key={evoName} style={styles.evolutionCard}>
-          <Image
-            source={{
-              uri: `https://img.pokemondb.net/sprites/home/normal/${evoName}.png`,
-            }}
-            style={styles.evolutionImage}
-          />
-          <Text style={styles.evolutionName}>{evoName}</Text>
+        <View>
+          <Text style={styles.subtitle}>Évolutions :</Text>
         </View>
-      ))}
-    </View>
-  </View>
-)}
+        <View style={styles.evolutionRow}>
+          {evolutionNames.flatMap((evoName, index) => {
+            const item = (
+              <View key={evoName} style={styles.evolutionCard}>
+                <Image
+                  source={{
+                    uri: `https://img.pokemondb.net/sprites/home/normal/${evoName}.png`,
+                  }}
+                  style={styles.evolutionImage}
+                />
+                <Text style={styles.evolutionName}>{evoName}</Text>
+              </View>
+            );
+
+            if (index < evolutionNames.length - 1) {
+              return [
+                item,
+                <Text key={`arrow-${index}`} style={styles.arrow}>
+                  ⟶
+                </Text>,
+              ];
+            }
+
+            return [item];
+          })}
+        </View>
 
         <TouchableOpacity
           onPress={() => {
@@ -194,7 +206,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 25,
     fontWeight: '600',
-    marginTop: 1,
+    marginTop: 5,
     marginBottom: 8,
   },
   typeContainer: {
@@ -230,26 +242,35 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   evolutionContainer: {
-  marginTop: 20,
-  width: '100%',
-},
-evolutionRow: {
-  flexDirection: 'row',
-  justifyContent: 'center',
-  gap: 16,
-  flexWrap: 'wrap',
-  marginTop: 8,
-},
-evolutionCard: {
-  alignItems: 'center',
-},
-evolutionImage: {
-  width: 70,
-  height: 70,
-},
-evolutionName: {
-  textTransform: 'capitalize',
-  marginTop: 4,
-},
-
+    marginTop: 10,
+    width: '100%',
+  },
+  evolutionRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginTop: 0,
+  },
+  evolutionCard: {
+    alignItems: 'center',
+  },
+  evolutionImage: {
+    width: 70,
+    height: 70,
+    marginHorizontal: 0,
+  },
+  evolutionName: {
+    textTransform: 'capitalize',
+    marginTop: 4,
+  },
+  evolutionStep: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  arrow: {
+    fontSize: 20,
+    color: '#333',
+    marginTop: 4,
+  },
 });
