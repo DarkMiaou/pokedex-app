@@ -12,8 +12,21 @@ export default function PokemonDetails() {
   const { name } = useLocalSearchParams();
   const router = useRouter();
   const [pokemon, setPokemon] = useState<any>(null);
+  const [evolutionNames, setEvolutionNames] = useState<string[]>([]);
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
   const [isFav, setIsFav] = useState(false);
+
+  function extractEvolutionNames(chain: any): string[] {
+  const names = [];
+  let current = chain;
+
+  while (current) {
+    names.push(current.species.name);
+    current = current.evolves_to?.[0];
+  }
+
+  return names;
+}
 
   useEffect(() => {
     if (name && typeof name === 'string') {
@@ -22,12 +35,24 @@ export default function PokemonDetails() {
   }, [isFavorite, name]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
-      setPokemon(res.data);
-    };
-    fetchData();
-  }, [name]);
+  const fetchData = async () => {
+    try {
+      const pokeRes = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
+      setPokemon(pokeRes.data);
+
+      const speciesRes = await axios.get(pokeRes.data.species.url);
+      const evoChainUrl = speciesRes.data.evolution_chain.url;
+
+      const evoRes = await axios.get(evoChainUrl);
+      const names = extractEvolutionNames(evoRes.data.chain);
+      setEvolutionNames(names);
+    } catch (err) {
+      console.error('Erreur lors de la récupération des données :', err);
+    }
+  };
+
+  if (name) fetchData();
+}, [name]);
 
   if (!pokemon) return <Text>Chargement...</Text>;
 
@@ -45,7 +70,9 @@ export default function PokemonDetails() {
       <View style={styles.card}>
         <Text style={styles.title}>{pokemon.name}</Text>
         <Image
-          source={{ uri: pokemon.sprites.front_default }}
+          source={{ 
+              uri: `https://img.pokemondb.net/sprites/home/normal/${pokemon.name}.png`,
+          }}
           style={styles.image}
         />
         <View
@@ -79,6 +106,25 @@ export default function PokemonDetails() {
           </Text>
         ))}
 
+        {evolutionNames.length > 0 && (
+  <View style={styles.evolutionContainer}>
+    <Text style={styles.subtitle}>Évolutions :</Text>
+    <View style={styles.evolutionRow}>
+      {evolutionNames.map((evoName) => (
+        <View key={evoName} style={styles.evolutionCard}>
+          <Image
+            source={{
+              uri: `https://img.pokemondb.net/sprites/home/normal/${evoName}.png`,
+            }}
+            style={styles.evolutionImage}
+          />
+          <Text style={styles.evolutionName}>{evoName}</Text>
+        </View>
+      ))}
+    </View>
+  </View>
+)}
+
         <TouchableOpacity
           onPress={() => {
             if (typeof name === 'string') {
@@ -108,7 +154,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  image: { width: 150, height: 150, marginVertical: 12 },
+  image: { width: 150, height: 150, marginVertical: -30, marginBottom: 0 },
   type: {
     textTransform: 'capitalize',
     backgroundColor: '#eee',
@@ -148,7 +194,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 25,
     fontWeight: '600',
-    marginTop: 30,
+    marginTop: 1,
     marginBottom: 8,
   },
   typeContainer: {
@@ -183,4 +229,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  evolutionContainer: {
+  marginTop: 20,
+  width: '100%',
+},
+evolutionRow: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  gap: 16,
+  flexWrap: 'wrap',
+  marginTop: 8,
+},
+evolutionCard: {
+  alignItems: 'center',
+},
+evolutionImage: {
+  width: 70,
+  height: 70,
+},
+evolutionName: {
+  textTransform: 'capitalize',
+  marginTop: 4,
+},
+
 });
